@@ -4,6 +4,8 @@ import { GetStaticPaths, GetStaticProps } from "next"
 import Image from 'next/image'
 import { ImageContainer, ProductContainer, ProductDetails } from "../../styles/pages/product"
 import { useRouter } from 'next/router'
+import axios from 'axios'
+import { useState } from 'react'
 
 interface ProductProps {
   product: {
@@ -17,10 +19,25 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
+  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false);
   const { isFallback } = useRouter()
 
-  function handleBuyProduct() {
-    console.log(product)
+  async function handleBuyProduct() {
+    try {
+      setIsCreatingCheckoutSession(true);
+
+      const response = await axios.post('/api/checkout', {
+        priceId: product.defaultPriceId,
+      });
+
+      const { checkoutUrl } = response.data;
+
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      // Here is a good place to connect with a observation tool like datadog or sentry
+      setIsCreatingCheckoutSession(false);
+      alert('Fail to redirect to checkout.');
+    }
   }
 
   if (isFallback) {
@@ -39,7 +56,7 @@ export default function Product({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button onClick={handleBuyProduct}>
+        <button disabled={isCreatingCheckoutSession} onClick={handleBuyProduct}>
           Buy now
         </button>
       </ProductDetails>
