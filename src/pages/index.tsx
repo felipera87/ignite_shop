@@ -32,7 +32,9 @@ export default function Home({ products }: HomeProps) {
     <HomeContainer ref={sliderRef} className="keen-slider">
       {products.map(product => {
         return (
-          <Link key={product.id} href={`/product/${product.id}`}>
+          // prefetch is a feature to load a page when a link is visible on screen, so when the user click on it
+          // it'll fetch that page before. It's dangerous if page have too many links on screen          
+          <Link key={product.id} href={`/product/${product.id}`} prefetch={false}>
             <Product  className="keen-slider__slide">
               <Image src={product.imageUrl} width={520} height={480} alt="" />
 
@@ -42,10 +44,8 @@ export default function Home({ products }: HomeProps) {
               </footer>
             </Product>
           </Link>
-
         )
       })}
-
     </HomeContainer>
   )
 }

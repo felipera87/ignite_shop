@@ -44,6 +44,7 @@ export default function Product({ product }: ProductProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
+    // list of paths for build time, it'll generate all pages in this array
     paths: [
       { params: { id: 'prod_NglvWCCEu9xtGp' } }
     ],
